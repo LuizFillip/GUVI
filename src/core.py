@@ -73,6 +73,6 @@ def mean_from_region(files):
     
     return df 
 
-df  = mean_from_region(files)
+# df  = mean_from_region(files)
 
-df.to_csv('ON2')
+# df.to_csv('ON2')
