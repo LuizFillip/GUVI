@@ -70,6 +70,7 @@ def mean_from_region(files):
     df  = df.sort_index()
     
     df = df.loc[df.index.month == 12]
+    
     return df 
 
 df  = mean_from_region(files)
