@@ -32,7 +32,8 @@ def dataset(fn):
 
 def plot_ON2_GUVI_maps(ax, ds, i):
      
-    levels = np.arange(0.2, 0.8, 0.01)
+    levels = np.arange(0.1, 0.8, 0.01)
+    
     img = ax.contourf(
         ds['GRID_LONGITUDE'], 
         ds['GRID_LATITUDE'], 
@@ -43,9 +44,9 @@ def plot_ON2_GUVI_maps(ax, ds, i):
     gg.plot_square_area(
         ax,
         lat_min = -10,
-        lon_min = -50,
-        lat_max = 5, 
-        lon_max = -40, 
+        lon_min = -40,
+        lat_max = 10, 
+        lon_max = -70, 
         color = 'white'
         )
         
@@ -70,39 +71,38 @@ def plot_ON2_GUVI_maps(ax, ds, i):
             yticks = np.arange(-40, 30, 20)
             )
     
-    ticks = np.arange(0.2, 0.8, .1)
+    ticks = np.arange(0.2, 1.2, .2)
     
     if i == 3:
         
         b.colorbar(
-                img, 
-                ax, 
-                ticks, 
-                label = '$O/N_2$', 
-                height = "100%", 
-                width = "10%",
-                orientation = "vertical", 
-                anchor = (.25, 0., 1, 1)
-                )
+            img, 
+            ax, 
+            ticks, 
+            label = '$[O/N_2]$', 
+            height = "100%", 
+            width = "10%",
+            orientation = "vertical", 
+            anchor = (.25, 0., 1, 1)
+            )
     return img 
 
 def plot_ON2_timeseries(ax, dn_start, dn_end):
        
-    df = b.load('GUVI/data/ON2')
+    df = b.load('GUVI/data/ON2_SAA')
     
     ax.plot(
-        df * 1e2,
+        df ,
         lw = 2, 
         marker = 'o', 
         markersize = 20, 
-        fillstyle = 'none'
+        # fillstyle = 'none'
         )
     
     
     ax.set(
-        xlim = [dn_start, dn_end ],
-        # ylim = [0.01, 0.06], 
-        ylabel = '$[O/N_2] \\times 10^{-2}$'
+        xlim = [dn_start, dn_end],
+        ylabel = '$[O/N_2]$'
         )
     
     b.format_time_axes(
@@ -115,36 +115,47 @@ def plot_ON2_timeseries(ax, dn_start, dn_end):
     
     return None 
 
+def plot_ON2_maps_timeseries():
+    
+     
+    dates_str = os.listdir(path)
+    
+    dn_start = dt.datetime(2015, 12, 19)
+    dn_end = dt.datetime(2015, 12, 23)
+      
+    dates_filtered = [
+        fn for fn in dates_str if 
+        dn_start <= fn2dn(fn) <= dn_end
+        ]
+    
+    fig = plt.figure(dpi = 300, figsize = (14, 8))
+    
+    gs2 = GridSpec(2, 4, figure=fig)
+    
+    gs2.update(hspace = 0.8, wspace = 0)
+    
+    for col, fn in enumerate(sorted(dates_filtered)):
+        
+        ds = dataset(fn)
+        
+        ax = plt.subplot(
+            gs2[0, col], 
+            projection = ccrs.PlateCarree()
+            )
+        
+        plot_ON2_GUVI_maps(ax, ds, col)
+        
+        title = fn2dn(fn).strftime('%d/%m/%y')
+        
+        ax.set(title = title)
+        
+    ax = plt.subplot(gs2[1, :])
+        
+    plot_ON2_timeseries(ax, dn_start, dn_end)
+    
+    ax.text(-0.1, 1.2, '(b)', transform = ax.transAxes)
+    ax.text(-0.1, 3, '(a)', transform = ax.transAxes)
+    
+    return fig
 
-dates_str = os.listdir(path)
-
-dn_start = dt.datetime(2015, 12, 19)
-dn_end = dt.datetime(2015, 12, 23)
-  
-dates_filtered = [
-    fn for fn in dates_str if 
-    dn_start <= fn2dn(fn) <= dn_end
-    ]
-
-fig = plt.figure(dpi = 300, figsize = (14, 8))
-
-gs2 = GridSpec(2, 4, figure=fig)
-
-gs2.update(hspace = 0.5, wspace = 0)
-
-for col, fn in enumerate(dates_filtered):
-    
-    ds = dataset(fn)
-    
-    ax = plt.subplot(
-        gs2[0, col], 
-        projection = ccrs.PlateCarree()
-        )
-    
-    img = plot_ON2_GUVI_maps(ax, ds, col)
-    
-    
-    
-ax = plt.subplot(gs2[1, :])
-    
-plot_ON2_timeseries(ax, dn_start, dn_end)
+fig = plot_ON2_maps_timeseries()

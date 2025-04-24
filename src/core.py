@@ -7,7 +7,7 @@ import pandas as pd
 path = 'GUVI/data/201512/'
 
 
-files = os.listdir(path)
+
 
 
 def convert_frac_days(frac_days, year = 2015):
@@ -18,7 +18,9 @@ def convert_frac_days(frac_days, year = 2015):
     return [dt.isoformat() for dt in datetimes]
     
 
-def mean_from_region(files):
+def mean_from_region(path):
+    
+    files = os.listdir(path)
     
     out = {
            'ON2': [], 
@@ -34,11 +36,17 @@ def mean_from_region(files):
         
         # times = convert_frac_days(frac_days, year = 2015)
         
+        lat_min = -20
+        lat_max = 10
+        
+        lon_min = -70
+        lon_max = -40 
+        
         ds_sel = ds.where(
-            (ds['GRID_LONGITUDE'] > -70) & 
-            (ds['GRID_LONGITUDE'] < -30) & 
-            (ds['GRID_LATITUDE'] > -15) & 
-            (ds['GRID_LATITUDE'] < 10),
+            (ds['GRID_LONGITUDE'] > lon_min) & 
+            (ds['GRID_LONGITUDE'] < lon_max) & 
+            (ds['GRID_LATITUDE'] > lat_min) & 
+            (ds['GRID_LATITUDE'] < lat_max),
             drop = True  
         )   
         
@@ -73,6 +81,6 @@ def mean_from_region(files):
     
     return df 
 
-# df  = mean_from_region(files)
+df  = mean_from_region(path)
 
-# df.to_csv('ON2')
+df.to_csv('GUVI/data/ON2_SAA')
