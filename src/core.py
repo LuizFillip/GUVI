@@ -81,6 +81,6 @@ def mean_from_region(path):
     
     return df 
 
-df  = mean_from_region(path)
+# df  = mean_from_region(path)
 
-df.to_csv('GUVI/data/ON2_SAA')
+# df.to_csv('GUVI/data/ON2_SAA')
