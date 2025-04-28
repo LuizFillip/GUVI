@@ -23,7 +23,8 @@ def mean_from_region(path):
     files = os.listdir(path)
     
     out = {
-           'ON2': [], 
+           'mean': [],
+           'std': [],
            'dn': []
            }
     for fn in files:
@@ -31,12 +32,8 @@ def mean_from_region(path):
         ds = xr.open_dataset(path + fn)
         
         ds['GRID_LONGITUDE'] = ds['GRID_LONGITUDE'] - 180
-        
-        frac_days = ds['FRACTIONAL_DOY'].values 
-        
-        # times = convert_frac_days(frac_days, year = 2015)
-        
-        lat_min = -20
+
+        lat_min = -10
         lat_max = 10
         
         lon_min = -70
@@ -65,9 +62,10 @@ def mean_from_region(path):
                 '%Y%j%H%M%S'
                 )
             
-        avg = ds_sel['ON2_GRID'].values.mean()
+        vls = ds_sel['ON2_GRID'].values
         
-        out['ON2'].append(avg)
+        out['mean'].append(vls.mean())
+        out['std'].append(vls.std())
         out['dn'].append(dn)
         
        
@@ -83,4 +81,6 @@ def mean_from_region(path):
 
 # df  = mean_from_region(path)
 
-# df.to_csv('GUVI/data/ON2_SAA')
+# df.to_csv('GUVI/data/ON2_SAA_2')
+
+# df
