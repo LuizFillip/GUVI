@@ -9,7 +9,7 @@ from GUVI import fn2dn
 import datetime as dt 
 import base as b 
 
-b.config_labels()
+b.sci_format()
 
 path = 'GUVI/data/201512/'
 
@@ -71,7 +71,7 @@ def plot_ON2_GUVI_maps(ax, ds, i):
             yticks = np.arange(-40, 30, 20)
             )
     
-    ticks = np.arange(0.2, 1.2, .2)
+    ticks = np.arange(0.2, 1.4, .2)
     
     if i == 3:
         
@@ -158,4 +158,13 @@ def plot_ON2_maps_timeseries():
     
     return fig
 
-fig = plot_ON2_maps_timeseries()
+def main():
+    fig = plot_ON2_maps_timeseries()
+    
+    FigureName = 'O_N2_maps'
+    
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
+    
+    fig.savefig(path_to_save + FigureName, dpi = 400)
+        
